@@ -178,7 +178,9 @@ export default {
     initWebsocket() {
       const vm = this;
       if (this.ws == null) {
-        this.ws = new WebSocket("ws://localhost:5600/wss?token=" + this.getUserToken());
+        // this.ws = new WebSocket("ws://localhost:5600/wss?token=" + this.getUserToken());
+        this.ws = new WebSocket("wss://roulette-game.herokuapp.com/wss?token=" + this.getUserToken());
+        
         this.ws.onopen = function () {
           // vm.isLogin = true;
           vm.isConnected = true;

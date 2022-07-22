@@ -29,7 +29,7 @@ export default {
         this.clearAll();
       }
       if (status.length > 0) {
-        this.uploadBets();
+        // this.uploadBets();
       }
     },
     roundStatus(status, old) {
@@ -43,9 +43,9 @@ export default {
         // this.getLastBet();
       }
 
-      // if(status === 'wait'){
-      //    this.uploadBets();
-      // }
+      if(status === 'wait'){
+         this.uploadBets();
+      }
 
     }
   },
@@ -135,10 +135,11 @@ export default {
       try {
         const response = await request.post('api/game/openCode');
         const _numbers = [];
+        console.log(response.data.result, "is open code");
         if (response.data.result && Array.isArray(response.data.result)) {
           _numbers.push(response.data.result.map((round, index) => (`${round.open_code}`)))
         }
-
+        console.log(_numbers);
         this.$store.commit("setLoadedWinNumbers", _numbers[0].reverse());
       }
       catch (err) {
@@ -190,13 +191,13 @@ export default {
         //   setTimeout(async () => {
         //     await request.post('api/game/push', { seqPlay, dealer: 'Maria', playState: 'stop', });
 
-        //   }, 3000)
+        //   }, 6000)
         //   setTimeout(async () => {
         //     await request.post('api/game/push', { seqPlay, dealer: 'Maria', playState: 'result', number: Math.floor(Math.random()*36) });
-        //   }, 6000)
+        //   }, 12000)
         //   setTimeout(async () => {
         //     await request.post('api/game/push', { seqPlay, dealer: 'Maria', playState: 'end'});
-        //   }, 6000)
+        //   }, 15000)
 
         // }, 12000);
 

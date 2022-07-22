@@ -94,6 +94,9 @@ export default new Vuex.Store({
       if(value.length>14){
         state.winNumbers = value.slice(0,7).reverse();
       }
+      else{
+        state.winNumbers = value.reverse();
+      }
       
     },
     setWinNumbers(state,value){

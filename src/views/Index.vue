@@ -471,10 +471,11 @@ export default {
 
 
 
-    this.$nextTick(() => {
+    this.$nextTick(async () => {
 
       if (!this.ws) {
         // this.login();
+        
       }
 
       // request.post("https://api.asian888.club/member/login", {
@@ -1064,19 +1065,19 @@ export default {
           mobile: document.getElementById('mobile').value,
           password: document.getElementById('password').value,
         });
-        
-        if(res.data.status === 0 && res.data.message === 'success'){
-        
-            this.t = res.data.result.token;
-            this.$store.commit('setUserToken', this.t);
-            localStorage.setItem('userToken', this.t);
-            this.$store.commit('setLoginAction', "");
-            this.play = true;
+
+        if (res.data.status === 0 && res.data.message === 'success') {
+
+          this.t = res.data.result.token;
+          this.$store.commit('setUserToken', this.t);
+          localStorage.setItem('userToken', this.t);
+          this.$store.commit('setLoginAction', "");
+          this.play = true;
         }
         else {
           let instance = Vue.$toast.error(`Register is Failed, please check your network status!`);
         }
-      
+
       }
       catch (err) {
         console.log(err)

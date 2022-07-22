@@ -69,9 +69,9 @@ export default {
       try {
         const response = await request.post('api/game/getLastOrder');
         const vm = this;
-       
+
         if (response.data.result && response.data.message === 'success' && response.data.result.type === 'game') {
-          const { seqPlay, status, number, dealer} = response.data.result;
+          const { seqPlay, status, number, dealer } = response.data.result;
 
           vm.$store.commit('setSeqPlay', seqPlay);
           const roundInfo = {
@@ -179,8 +179,27 @@ export default {
       const vm = this;
       if (this.ws == null) {
         // this.ws = new WebSocket("ws://localhost:5600/wss?token=" + this.getUserToken());
-        this.ws = new WebSocket("wss://roulette-game.herokuapp.com/wss?token=" + this.getUserToken());
-        
+        this.ws = new WebSocket("wss://roulette-bet.herokuapp.com/wss?token=" + this.getUserToken());
+        // let seqPlay = 10000;
+        // setInterval(() => {
+        //   seqPlay++;
+        //   setTimeout(async () => {
+        //     await request.post('api/game/push', { seqPlay, dealer: 'Maria', playState: 'go', });
+
+        //   }, 100);
+        //   setTimeout(async () => {
+        //     await request.post('api/game/push', { seqPlay, dealer: 'Maria', playState: 'stop', });
+
+        //   }, 3000)
+        //   setTimeout(async () => {
+        //     await request.post('api/game/push', { seqPlay, dealer: 'Maria', playState: 'result', number: Math.floor(Math.random()*36) });
+        //   }, 6000)
+        //   setTimeout(async () => {
+        //     await request.post('api/game/push', { seqPlay, dealer: 'Maria', playState: 'end'});
+        //   }, 6000)
+
+        // }, 12000);
+
         this.ws.onopen = function () {
           // vm.isLogin = true;
           vm.isConnected = true;

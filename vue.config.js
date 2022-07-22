@@ -13,8 +13,8 @@ module.exports = defineConfig({
   devServer:{
     proxy:{
       '/api': {
-        // target: 'http://localhost:5600',
-        target: 'https://roulette-game.herokuapp.com',
+        target: 'http://localhost:5600',
+        // target: 'https://roulette-bet.herokuapp.com',
         changeOrigin: true,
         ws: true, 
       }

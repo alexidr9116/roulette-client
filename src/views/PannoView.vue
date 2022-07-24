@@ -1,6 +1,8 @@
 <template>
+  <div class="overflow-y-auto">
 
-  <Panno></Panno>
+    <Panno></Panno>
+  </div>
 
 </template>
 
@@ -43,8 +45,8 @@ export default {
         // this.getLastBet();
       }
 
-      if(status === 'wait'){
-         this.uploadBets();
+      if (status === 'wait') {
+        this.uploadBets();
       }
 
     }
@@ -82,6 +84,8 @@ export default {
           vm.$store.commit('setRoundInfo', roundInfo);
           if (status === 'go') {
             // vm.$store.commit("setRoundStatus", "started");
+            vm.$store.commit("setRoundStatus", "wait");
+
           }
           if (status === 'stop') {
             // no betting
@@ -158,22 +162,29 @@ export default {
       // this.$store.commit('setGameStatus','WIN');
       // this.$store.commit('setRoundBalance',eval('1230'));
       if (this.isConnected) {
-        for (const selected of this.$store.state.updated) {
+        // for (const selected of this.$store.state.updated) {
+        const bets = [];
+        for (const selected of this.$store.state.selected) {
           if (selected.refer.startsWith('o')) {
             continue;
           }
           const bet = {
-            type: (this.$store.state.betAction === 'remove' ? 'cancel' : 'bet'),
+            // type: (this.$store.state.betAction === 'remove' ? 'cancel' : 'bet'),
+            type: ('bet'),
             seqPlay: `${this.$store.state.seqPlay}`,
             bet_code: selected.refer,
 
           }
           if (this.$store.state.betAction === 'add') {
             bet.bet_amount = selected.value;
+
           }
-          console.log(bet)
-          this.ws.send(JSON.stringify(bet));
+          bets.push(bet);
+          //console.log(bet)
+
         }
+        if (bets.length > 0)
+          this.ws.send(JSON.stringify({ type: 'bet', seqPlay: `${this.$store.state.seqPlay}`, bets }));
       }
     },
     initWebsocket() {
@@ -225,7 +236,7 @@ export default {
             });
             if (selected.length > 0) {
               for (const s of selected) {
-                s.value = data.amount;
+                // s.value = data.amount;
               }
             }
             vm.$store.commit('setSelected', selected);

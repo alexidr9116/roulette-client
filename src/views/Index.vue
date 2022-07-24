@@ -4,14 +4,14 @@
   <div class="panno relative  overflow-hidden h-full w-full">
     <SettingDialog v-if="$store.state.activeTab !== ''" :activeTab="$store.state.activeTab"></SettingDialog>
 
-    <div class="w-full h-full flex items-center justify-center ">
+    <div class="w-full h-full flex md:items-center justify-center relative">
 
-      <div id="mlc-video-div" class="-mt-[8.5%] z-0 w-full h-full items-start flex md:items-center justify-center "
-        :class="(($store.state.roundStatus !== 'started') ? 'origin-top-left -mt-[120%]  scale-[200%] md:scale-100 md:flex md:-mt-[8.5%] ' : '')">
+      <div id="mlc-video-div" class="nano-video  relative z-0 w-full h-full items-start flex md:items-center justify-center "
+        :class="(($store.state.roundStatus !== 'started') ? 'origin-top-left -mt-[60%]  scale-[200%] md:scale-100 md:flex md:-mt-[8.5%] ' : 'md:-mt-[8.5%] ')">
       </div>
 
     </div>
-    <div class="mlc-header z-50 absolute top-0">
+    <div class="mlc-header z-50 absolute top-0 hidden sm:block">
       <!---->
       <div class="ng-star-inserted">
         <div class="infotavolo">
@@ -49,11 +49,10 @@
     <div class="absolute top-0 w-full h-full  items-center justify-center hidden md:flex ">
       <img src='/assets/panel.png' alt='banner' class=" z-0 w-full pointer-events-none	" />
     </div>
-    <LoginView v-if="(gameInfo.live_stream != '') && (!play) && (!$store.state.loginAction.includes('register'))">
+    <LoginView v-if="(gameInfo.live_stream != '') && ($store.state.loginAction!=='logined') && (!$store.state.loginAction.includes('register'))">
     </LoginView>
     <RegisterView v-if="($store.state.loginAction.includes('register'))"></RegisterView>
-
-    <PannoView v-if="this.play"></PannoView>
+    <PannoView v-if="($store.state.loginAction==='logined')"></PannoView>
   </div>
 
 </template>
@@ -475,7 +474,7 @@ export default {
 
       if (!this.ws) {
         // this.login();
-        
+
       }
 
       // request.post("https://api.asian888.club/member/login", {
@@ -499,6 +498,7 @@ export default {
     async login() {
       try {
         await this.handleLogout();
+        console.log("login.........")
         const res = await request.post('api/member/login', {
           username: document.getElementById('username').value,
           password: document.getElementById('password').value,
@@ -507,8 +507,7 @@ export default {
           this.t = res.data["result"]["token"];
           this.$store.commit('setUserToken', this.t);
           localStorage.setItem('userToken', this.t);
-          this.$store.commit('setLoginAction', "");
-
+          this.$store.commit('setLoginAction', "logined");
           return true;
         }
         else {
@@ -551,11 +550,13 @@ export default {
         try {
 
           const response = await request.post('api/member/loginOut', {}, { headers: this.getAxoisTokenHeader() });
-          if (response.data.status === 0 && response.data.result === '') {
+          if (response.data.status === 0 ) {
             this.play = false;
             this.ws = null;
             this.$store.commit('setUserToken', '');
             localStorage.setItem('userToken', '');
+            this.$store.commit('setLoginAction', 'logout');
+
           }
           console.log(response);
         }
@@ -1419,32 +1420,13 @@ button {
   bottom: 0;
 }
 
-.RL_GREEN .desktop #mlc-video-div,
-.RL_GREEN .desktop #mlc-video-tag,
-.RL_TRAIN01 .desktop #mlc-video-div,
-.RL_TRAIN01 .desktop #mlc-video-tag {
-  position: absolute;
 
+
+
+.nano-video{
+  transition:all 1s linear;
+  
 }
-
-
-#mlc-video-div,
-#mlc-video-tag {
-
-  overflow: hidden;
-  background-color: #000;
-  opacity: 1;
-  width: 100%;
-  height: 100%;
-  transition: all .2s linear;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-
-/*#mlc-video-div video{*/
-/*  width: 100%;*/
-/*  height: 100%;*/
-/*}*/
 
 @media (min-height: 56.25vw) and (max-width: 177.8vh) {
 

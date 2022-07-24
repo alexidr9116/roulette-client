@@ -129,8 +129,10 @@ export default new Vuex.Store({
     setSelected(state,selected){
       state.selected = selected;
       const _betted = selected.reduce((prev:Number,current:any)=>(prev+current.value),0);
-      state.roundBalance = _betted;
-      state.haveBalance = state.balance-_betted;
+      if(state.gameStatus!=='WIN'){
+        state.roundBalance = _betted;
+        state.haveBalance = state.balance-_betted;
+      }
     },
     setRoundStatus(state,status){
       state.roundStatus = status;

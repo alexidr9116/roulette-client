@@ -1,6 +1,6 @@
 <template>
   <div class="flex absolute top-0  w-full h-full md:items-center">
-    <div class="flex flex-col justify-center h-full overflow-y-hidden absolute w-full md:w-1/2 ">
+    <div class="flex flex-col justify-center h-full overflow-y-hidden absolute w-full md:w-1/2 win-numbers">
       <div class="flex flex-col  h-1/2 md:h-2/3 relative">
         <AppToast :showMessage="showToast" :title="toastTitle" :message="toastMessage"></AppToast>
         <CounterDesktop v-if="($store.state.roundStatus === 'started')"></CounterDesktop>
@@ -133,6 +133,7 @@
 </template>
 
 <script>
+import Vue from 'vue';
 import Ovale from "./sections/Ovale";
 import OvaleSnap from "./sections/OvaleSnap";
 import PannoPanel from "./sections/PannoPanel";
@@ -479,10 +480,14 @@ export default {
         const arr = [];
 
         if (response.data.message === 'success') {
+          let userBalance = this.$store.state.haveBalance;
           for (const bet of response.data.result) {
-            arr.push({ refer: bet.bet_code, value: eval(bet.bet_amount) });
+            userBalance -=bet.bet_amount;
+            if (userBalance  > 0)
+              arr.push({ refer: bet.bet_code, value: eval(bet.bet_amount) });
+            else
+              break;
           }
-          
           this.$store.commit('setSelected', arr);
           this.$store.commit('setUpdated', arr);
           this.twoxMode = true;
@@ -500,12 +505,29 @@ export default {
         this.getLastBet();
       else {
         const _arr = [];
-        for (const coin of this.$store.state.selected) {
+        let userBalance = this.$store.state.haveBalance;
+        let backup = this.$store.state.selected.slice(0, this.$store.state.selected.length);
+        let current = this.$store.state.selected.slice(0, this.$store.state.selected.length);
+        console.log(backup, " is original");
+        let valid = true;
+        for (const coin of current) {
           coin.value = coin.value * 2;
-          _arr.push(coin);
+          userBalance -= coin.value;
+          if (userBalance > 0)
+            _arr.push(coin);
+          else {
+            console.log(backup, ' is backup');
+            valid = false;
+            let instance = Vue.$toast.error(`Limit balance, please check your balance!`);
+            this.$store.commit('setSelected', backup);
+            break;
+          }
         }
-        this.$store.commit('setSelected', _arr);
-        this.$store.commit('setUpdated', _arr);
+        if (valid) {
+          this.$store.commit('setSelected', _arr);
+          this.$store.commit('setUpdated', _arr);
+        }
+
       }
     },
     initialize() {
@@ -2930,6 +2952,14 @@ button.mat-menu-item {
   .message-dialog .mat-dialog-container p {
     padding: 0 2vw;
   }
+}
+
+@media (max-height: 568px) {
+  .win-numbers {
+    margin-top: -60px;
+  }
+
+  /* Your Styles... */
 }
 
 @media screen and (orientation: portrait) {
